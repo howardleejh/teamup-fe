@@ -104,13 +104,8 @@ class Dashboard extends React.Component {
     }
 
     if (this.state.daysLeft === 0 || this.state.budget === 0) {
-      return <Redirect to='/register/date-and-budget' />
+      return <Redirect to='/date-and-budget' />
     }
-
-    // this.setState({
-    //   budget: this.state.budget.toFixed(2),
-    //   currentBudget: this.state.currentBudget.toFixed(2),
-    // })
 
     const { classes } = this.props
 

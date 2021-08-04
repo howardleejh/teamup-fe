@@ -9,6 +9,7 @@ import { useHistory } from 'react-router-dom'
 import axios from 'axios'
 import { useCookies } from 'react-cookie'
 import { toast } from 'material-react-toastify'
+import moment from 'moment'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -63,22 +64,24 @@ export default function RegisterDateBudget() {
 
   const [eDate, setEDate] = React.useState('')
   const [budget, setBudget] = React.useState('')
+  const [location, setLocation] = React.useState('')
   const [cookies] = useCookies(['auth_token'])
   let history = useHistory()
 
-  React.useEffect(() => {
-    const notify = (message) => toast.dark(message)
+  const notify = (message) => toast.dark(message)
 
+  React.useEffect(() => {
     notify('Please provide your Event Date and Budget!')
   }, [])
 
-  // PATCH REQUEST TO UPDATE EDATE AND BUDGET //
-  const updateUserProfile = async () => {
+  // PATCH REQUEST TO UPDATE E-DATE AND BUDGET //
+  async function dateBudgetInit() {
     await axios
-      .patch(
-        'https://teamup-be.herokuapp.com/api/v1/users/profile/update',
+      .post(
+        'https://teamup-be.herokuapp.com/api/v1/users/date-budget-init',
         {
           d_date: eDate,
+          d_destination: location,
           e_budget: budget,
         },
         {
@@ -86,7 +89,8 @@ export default function RegisterDateBudget() {
         }
       )
       .then((response) => {
-        return response
+        console.log(response.data)
+        return response.data.message
       })
       .catch((err) => {
         return err
@@ -95,17 +99,31 @@ export default function RegisterDateBudget() {
 
   // submit form function
   const handleFormSubmission = async (e) => {
-    let response = {}
-
     e.preventDefault()
-    try {
-      response = await updateUserProfile()
-    } catch (err) {
-      return err
+
+    const now = moment()
+
+    const eventDate = moment(eDate)
+
+    if (!budget || budget <= 0) {
+      notify('Please provide a valid budget.')
+      return
     }
 
-    if (!response) {
+    if (eventDate < now) {
+      notify('Please provide a valid date.')
       return
+    }
+
+    if (!location) {
+      notify('Please provide a location.')
+    }
+
+    let postData = null
+    try {
+      postData = await dateBudgetInit()
+    } catch (err) {
+      return err
     }
     history.push('/dashboard')
     return
@@ -141,7 +159,7 @@ export default function RegisterDateBudget() {
               id='date'
               label='Wedding Date'
               type='date'
-              defaultValue='2022-05-24'
+              defaultValue='YYYY-MM-DD'
               onChange={(e) => {
                 setEDate(e.target.value)
               }}
@@ -155,7 +173,7 @@ export default function RegisterDateBudget() {
               variant='h4'
               align='center'
             >
-              Input your budget!
+              How much is your budget?
             </Typography>
             <img
               src='https://res.cloudinary.com/dhexix4cn/image/upload/v1626617735/teamup/budget-purple_adjbcg.png'
@@ -172,6 +190,33 @@ export default function RegisterDateBudget() {
               name='weddingBudget'
               onChange={(e) => {
                 setBudget(e.target.value)
+              }}
+              className={classes.textField}
+              autoFocus
+            />
+
+            <Typography
+              style={{ fontWeight: '600', marginTop: '50px' }}
+              variant='h4'
+              align='center'
+            >
+              Your Wedding Location?
+            </Typography>
+            <img
+              src='https://res.cloudinary.com/dhexix4cn/image/upload/v1626617735/teamup/budget-purple_adjbcg.png'
+              alt='logo'
+              className={classes.icons}
+            />
+
+            <TextField
+              variant='outlined'
+              margin='normal'
+              required
+              id='wedding-location'
+              label='Location'
+              name='weddingLocation'
+              onChange={(e) => {
+                setLocation(e.target.value)
               }}
               className={classes.textField}
               autoFocus

@@ -27,7 +27,6 @@ import EventMain from './components/pages/Event-Schedule/Event-Main'
 import UpdateUser from './components/pages/User/UpdateUser'
 import LandingPage from './components/pages/Landing-Page/LandingPage'
 
-
 const theme = createTheme({
   typography: {
     fontFamily: ['Lexend', 'sans-serif'].join(','),
@@ -77,10 +76,7 @@ class App extends React.Component {
                   path='/register/change-password/:activationId'
                   component={RegisterChangePassword}
                 />
-                <Route
-                  path='/register/date-and-budget'
-                  component={RegisterDateBudget}
-                />
+                <Route path='/date-and-budget' component={RegisterDateBudget} />
 
                 <Route path='/register' component={RegisterPage} />
 
@@ -113,9 +109,6 @@ class App extends React.Component {
 
                 {/* Landing Page*/}
                 <Route path='/' component={LandingPage} />
-
-
-
               </Switch>
             </div>
           </Router>
