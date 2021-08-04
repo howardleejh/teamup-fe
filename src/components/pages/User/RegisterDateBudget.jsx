@@ -105,23 +105,23 @@ export default function RegisterDateBudget() {
 
     const eventDate = moment(eDate)
 
-    if (!budget || budget <= 0) {
-      notify('Please provide a valid budget.')
-      return
-    }
-
     if (eventDate < now) {
       notify('Please provide a valid date.')
       return
     }
 
-    if (!location) {
-      notify('Please provide a location.')
+    if (!budget || budget <= 0) {
+      notify('Please provide a valid budget.')
+      return
     }
 
-    let postData = null
+    if (!location) {
+      notify('Please provide a location.')
+      return
+    }
+
     try {
-      postData = await dateBudgetInit()
+      await dateBudgetInit()
     } catch (err) {
       return err
     }
